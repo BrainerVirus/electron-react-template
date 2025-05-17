@@ -8,12 +8,10 @@ app.on('ready', () => {
   if (isDev()) {
     // Load the file with the hash fragment pointing to home route
     mainWindow.loadURL('http://localhost:5123')
-  }else{
-      // Load the file with the hash fragment pointing to home route
-  mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'), {
-    hash: '/',
-  })
+  } else {
+    // Load the file with the hash fragment pointing to home route
+    mainWindow.loadFile(path.join(app.getAppPath(), '/dist-react/index.html'), {
+      hash: '/',
+    })
   }
-
-
 })
