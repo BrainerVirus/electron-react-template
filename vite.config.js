@@ -7,23 +7,34 @@ import { defineConfig } from 'vite';
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
 
 // https://vitejs.dev/config/
+// Check if we're in test mode
+const isTest = process.env.NODE_ENV === 'test' || process.env.VITEST;
+
 export default defineConfig({
 	plugins: [
-		MillionLint.vite({
-			enabled: true,
-			filter: {
-				include: ['src/**/*.js', 'src/**/*.jsx', 'src/**/*.ts', 'src/**/*.tsx'],
-				exclude: ['src/electron/**'],
-			},
-		}),
+		// Only enable Million Lint when not testing
+		!isTest &&
+			MillionLint.vite({
+				enabled: true,
+				filter: {
+					include: ['src/**/*.js', 'src/**/*.jsx', 'src/**/*.ts', 'src/**/*.tsx'],
+					exclude: ['src/electron/**'],
+				},
+			}),
 		TanStackRouterVite({ autoCodeSplitting: true }),
 		viteReact(),
 		tailwindcss(),
 	],
 	base: './',
 	test: {
-		globals: true,
-		environment: 'jsdom',
+		// environment: 'jsdom',
+		// globals: true,
+		// Temporarily disable browser testing to test with jsdom only
+		browser: {
+			enabled: true,
+			provider: 'playwright',
+			instances: [{ browser: 'chromium' }],
+		},
 	},
 	resolve: {
 		alias: {
