@@ -5,9 +5,74 @@ on:
     branches: [main]
 
 jobs:
+  build-windows:
+    name: Build - Windows
+    runs-on: windows-latest # Run on a Windows machine
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Windows app
+        run: npm run dist:win
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-artifacts
+          path: dist/
+          retention-days: 7
+
+  build-mac:
+    name: Build - macOS
+    runs-on: macOS-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build macOS app
+        run: npm run dist:mac
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-artifacts
+          path: dist/
+          retention-days: 7
+
+  build-linux:
+    name: Build - Linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build Linux app
+        run: npm run dist:linux
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-artifacts
+          path: dist/
+          retention-days: 7
+
   release:
     name: Release
     runs-on: ubuntu-latest
+    # This job needs the build jobs from the CI workflow to complete successfully
+    needs: [build-windows, build-mac, build-linux]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -20,7 +85,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Lint
-        run: npm run lint || echo "Linting issues found but continuing"
+        run: npm run lint
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: app-artifacts
+          path: .
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
