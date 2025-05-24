@@ -1,301 +1,186 @@
-Welcome to your new TanStack app!
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
-# Getting Started
+## 📋 Overview
 
-To run this application:
+This template provides a solid foundation for developing Electron applications with a modern React frontend. It comes pre-configured with TypeScript, Tailwind CSS, TanStack Router, and Shadcn UI components to help you build beautiful, type-safe desktop applications quickly.
 
-```bash
-pnpm install
-pnpm start
-```
+## ✨ Features
 
-# Building For Production
+- **Electron** - Cross-platform desktop application framework
+- **React 19** - Latest React with modern features
+- **TypeScript** - Type safety throughout the codebase
+- **Tailwind CSS** - Utility-first CSS framework
+- **TanStack Router** - File-based routing with type safety
+- **Shadcn UI** - High-quality, customizable UI components
+- **ESLint & Prettier** - Code linting and formatting
+- **Vite** - Fast development and build tooling
+- **Vitest** - Unit testing framework
+- **Million.js** - Performance optimization for React
+- **Cross-platform** - Build for Windows, macOS, and Linux
 
-To build this application for production:
+## 🚀 Quick Start
 
-```bash
-pnpm build
-```
+### Prerequisites
 
-## Testing
+- Node.js 22.x or higher
+- npm (required, pnpm has compatibility issues with Electron)
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
-
-```bash
-pnpm test
-```
-
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-## Linting & Formatting
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
+### Installation
 
 ```bash
-pnpm lint
-pnpm format
-pnpm check
+# Clone the repository
+git git@github.com:BrainerVirus/electron-react-template.git
+cd electron-react-template
+
+# Install dependencies
+npm install
 ```
 
-## Shadcn
+### Development
 
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
+```bash
+# Start the development server (React + Electron)
+npm run dev
+```
+
+### Building for Production
+
+```bash
+# Build for your current platform
+npm run build
+
+# Build for specific platforms
+npm run dist:win    # Windows
+npm run dist:mac    # macOS
+npm run dist:linux  # Linux
+npm run dist:all    # All platforms
+```
+
+## 📁 Project Structure
+
+```
+electron-react-template/
+├── dist-electron/       # Compiled Electron main process code
+├── dist-react/          # Compiled React application
+├── public/              # Static assets
+├── src/
+│   ├── components/      # React components
+│   │   └── ui/          # Shadcn UI components
+│   ├── electron/        # Electron main process code
+│   │   ├── main.ts      # Main entry point for Electron
+│   │   ├── util.ts      # Electron utilities
+│   │   └── tsconfig.json # TypeScript config for Electron
+│   ├── hooks/           # React custom hooks
+│   ├── lib/             # Shared utilities
+│   ├── routes/          # TanStack Router routes
+│   │   ├── __root.tsx   # Root route layout
+│   │   └── index.tsx    # Home page route
+│   ├── main.tsx         # React entry point
+│   └── styles.css       # Global styles
+├── .eslintrc.js         # ESLint configuration
+├── .prettierrc          # Prettier configuration
+├── electron-builder.json # Electron build configuration
+├── index.html           # HTML template
+├── package.json         # Project dependencies and scripts
+├── tsconfig.json        # TypeScript configuration
+└── vite.config.js       # Vite configuration
+```
+
+## 📝 Available Scripts
+
+- `npm run dev` - Start the development server (React + Electron)
+- `npm run dev:react` - Start the React development server only
+- `npm run dev:electron` - Start the Electron development server only
+- `npm run build` - Build the production application
+- `npm run serve` - Preview the built application
+- `npm run test` - Run tests with Vitest
+- `npm run lint` - Run ESLint
+- `npm run format` - Run Prettier
+- `npm run check` - Run both ESLint and Prettier
+- `npm run dist:win` - Build for Windows
+- `npm run dist:mac` - Build for macOS (ARM64)
+- `npm run dist:linux` - Build for Linux
+- `npm run dist:all` - Build for all platforms
+
+## 🛠 Development
+
+### Adding Shadcn UI Components
 
 ```bash
 pnpx shadcn@latest add button
+pnpx shadcn@latest add dialog
+# Add more components as needed
 ```
 
-## Routing
+### Adding Routes
 
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
+Create new files in the routes directory:
 
-### Adding A Route
+```tsx
+// src/routes/about.tsx
+import { createFileRoute } from '@tanstack/react-router';
 
-To add a new route to your application just add another a new file in the `./src/routes` directory.
+export const Route = createFileRoute('/about')({
+  component: About,
+});
 
-TanStack will automatically generate the content of the route file for you.
+function About() {
+  return (
+    <div>
+      <h1>About Page</h1>
+    </div>
+  );
+}
+```
 
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+### Adding Links for Navigation
 
 ```tsx
 import { Link } from '@tanstack/react-router';
+
+// In your component
+<Link to="/about">About</Link>;
 ```
 
-Then anywhere in your JSX you can use it like so:
+## 🌐 Electron Configuration
 
-```tsx
-<Link to="/about">About</Link>
-```
+This template includes a basic Electron configuration in main.ts:
 
-This will create a link that will navigate to the `/about` route.
+- Development mode loads from `http://localhost:5123`
+- Production mode loads from index.html
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+To customize Electron functionality, modify the main.ts file.
 
-### Using A Layout
+## 🔧 Configuration Files
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
+- **tsconfig.json** - Main TypeScript configuration
+- **tsconfig.json** - Electron process TypeScript configuration
+- **vite.config.js** - Vite bundler configuration
+- **electron-builder.json** - Electron builder configuration
+- **eslint.config.js** - ESLint rules configuration
+- **prettier.config.js** - Prettier formatting rules
 
-Here is an example layout that includes a header:
+## 📚 Useful Resources
 
-```tsx
-import { Outlet, createRootRoute } from '@tanstack/react-router';
-import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+- [Electron Documentation](https://www.electronjs.org/docs/latest)
+- [React Documentation](https://react.dev/)
+- [TanStack Router Documentation](https://tanstack.com/router/latest)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Shadcn UI Components](https://ui.shadcn.com/)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- [Vite Documentation](https://vitejs.dev/guide/)
 
-import { Link } from '@tanstack/react-router';
+## 📄 License
 
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
+This project is licensed under the [MIT License](./license.md) - see the license.md file for details.
 
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
+## ✨ Acknowledgments
 
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
+- [TanStack](https://tanstack.com/)
+- [Shadcn](https://ui.shadcn.com/)
+- [Electron](https://www.electronjs.org/)
+- [Vite](https://vitejs.dev/)
 
-## Data Fetching
+---
 
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: '/people',
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people');
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-pnpm add @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from '@tanstack/react-query';
-
-import './App.css';
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ['people'],
-    queryFn: () =>
-      fetch('https://swapi.dev/api/people')
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-pnpm add @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from '@tanstack/react-store';
-import { Store } from '@tanstack/store';
-import './App.css';
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>Increment - {count}</button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from '@tanstack/react-store';
-import { Store, Derived } from '@tanstack/store';
-import './App.css';
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>Increment - {count}</button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+Made with ❤️ by [Cristhofer Pincetti](https://github.com/BrainerVirus)
