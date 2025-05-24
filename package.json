@@ -11,7 +11,14 @@
     "template"
   ],
   "license": "MIT",
-  "author": "Cristhofer",
+  "author": {
+    "name": "Cristhofer Pincetti",
+    "url": "https://github.com/BrainerVirus"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BrainerVirus/electron-react-template.git"
+  },
   "private": true,
   "engines": {
     "node": ">=22.14.0",
