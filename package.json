@@ -27,7 +27,7 @@
   "type": "module",
   "main": "dist-electron/main.js",
   "scripts": {
-    "dev": "npm-run-all --parallel dev:react dev:electron",
+    "dev": "start-server-and-test dev:react http://localhost:5123 dev:electron",
     "dev:react": "vite",
     "dev:electron": "npm run transpile:electron && cross-env NODE_ENV=development electron .",
     "build": "vite build && tsc",
@@ -75,7 +75,6 @@
     "@types/react-dom": "^19.0.3",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
     "@vitejs/plugin-react": "^4.3.4",
-    "@vitest/browser": "^3.1.4",
     "commitizen": "^4.3.1",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog": "^3.3.0",
@@ -97,10 +96,10 @@
     "prettier-plugin-organize-imports": "^4.1.0",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "semantic-release": "^24.2.5",
+    "start-server-and-test": "^2.0.12",
     "typescript": "^5.7.2",
     "vite": "^6.1.0",
     "vitest": "^3.1.4",
-    "vitest-browser-react": "^0.2.0",
     "web-vitals": "^4.2.4"
   },
   "lint-staged": {

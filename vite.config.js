@@ -27,9 +27,6 @@ export default defineConfig({
 	],
 	base: './',
 	test: {
-		// environment: 'jsdom',
-		// globals: true,
-		// Temporarily disable browser testing to test with jsdom only
 		browser: {
 			enabled: true,
 			provider: 'playwright',
@@ -47,5 +44,8 @@ export default defineConfig({
 	server: {
 		port: 5123,
 		strictPort: true,
+	},
+	optimizeDeps: {
+		exclude: ['@tanstack/react-router-devtools'],
 	},
 });
