@@ -1,7 +1,16 @@
 {
-  "name": "discord-clone",
+  "name": "electron-react-template",
   "version": "1.0.0",
-  "description": "A Discord clone application",
+  "description": "A template for building Electron applications with React, TypeScript, and Tailwind CSS",
+  "keywords": [
+    "electron",
+    "react",
+    "typescript",
+    "tailwindcss",
+    "vite",
+    "template"
+  ],
+  "license": "MIT",
   "author": "Cristhofer",
   "private": true,
   "type": "module",
