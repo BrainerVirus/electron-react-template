@@ -1,3 +1,7 @@
+# Electron React Template
+
+A modern, feature-rich template for building cross-platform desktop applications with Electron, React, TypeScript, and Tailwind CSS.
+
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 
 ## 📋 Overview
@@ -18,23 +22,68 @@ This template provides a solid foundation for developing Electron applications w
 - **Million.js** - Performance optimization for React
 - **Cross-platform** - Build for Windows, macOS, and Linux
 
-## 🚀 Quick Start
+## 🔄 Using This Template
+
+This repository is designed to be used as a template for building Electron applications with React. There are two ways to use it:
+
+### Option 1: GitHub Template (Recommended)
+
+1. Click the "Use this template" button at the top of the repository
+2. Select "Create a new repository"
+3. Choose the owner and name for your new repository
+4. Click "Create repository from template"
+5. Clone your new repository:
+   ```bash
+   git clone https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
+   cd YOUR-REPO-NAME
+   ```
+6. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+**Benefits:** Creates a fresh repository without commit history, ready for your project.
+
+### Option 2: Clone and Customize
+
+```bash
+# Clone the repository
+git clone https://github.com/BrainerVirus/electron-react-template.git my-app
+
+# Enter project directory
+cd my-app
+
+# Reset Git history
+rm -rf .git
+git init
+git add .
+git commit -m "Initial commit from template"
+
+# Install dependencies
+npm install
+```
+
+### Required Post-Template Setup
+
+After creating your project using either method above, you'll need to:
+
+1. **Update package.json**:
+
+   - Change the name, description, and version
+   - Update the repository URL to your new repo
+   - Adjust any dependencies as needed
+
+2. **Configure GitHub Actions**:
+   - Keep or modify release.yml based on your needs:
+     - For a template/library: Use the simpler template release workflow
+     - For an application: Use the full Electron build workflow (see below)
+
+## 🚀 Development Workflow
 
 ### Prerequisites
 
 - Node.js 22.x or higher
 - npm (required, pnpm has compatibility issues with Electron)
-
-### Installation
-
-```bash
-# Clone the repository
-git git@github.com:BrainerVirus/electron-react-template.git
-cd electron-react-template
-
-# Install dependencies
-npm install
-```
 
 ### Development
 
@@ -56,61 +105,7 @@ npm run dist:linux  # Linux
 npm run dist:all    # All platforms
 ```
 
-## 📁 Project Structure
-
-```
-electron-react-template/
-├── dist-electron/       # Compiled Electron main process code
-├── dist-react/          # Compiled React application
-├── public/              # Static assets
-├── src/
-│   ├── components/      # React components
-│   │   └── ui/          # Shadcn UI components
-│   ├── electron/        # Electron main process code
-│   │   ├── main.ts      # Main entry point for Electron
-│   │   ├── util.ts      # Electron utilities
-│   │   └── tsconfig.json # TypeScript config for Electron
-│   ├── hooks/           # React custom hooks
-│   ├── lib/             # Shared utilities
-│   ├── routes/          # TanStack Router routes
-│   │   ├── __root.tsx   # Root route layout
-│   │   └── index.tsx    # Home page route
-│   ├── main.tsx         # React entry point
-│   └── styles.css       # Global styles
-├── .eslintrc.js         # ESLint configuration
-├── .prettierrc          # Prettier configuration
-├── electron-builder.json # Electron build configuration
-├── index.html           # HTML template
-├── package.json         # Project dependencies and scripts
-├── tsconfig.json        # TypeScript configuration
-└── vite.config.js       # Vite configuration
-```
-
-## 📝 Available Scripts
-
-- `npm run dev` - Start the development server (React + Electron)
-- `npm run dev:react` - Start the React development server only
-- `npm run dev:electron` - Start the Electron development server only
-- `npm run build` - Build the production application
-- `npm run serve` - Preview the built application
-- `npm run test` - Run tests with Vitest
-- `npm run lint` - Run ESLint
-- `npm run format` - Run Prettier
-- `npm run check` - Run both ESLint and Prettier
-- `npm run dist:win` - Build for Windows
-- `npm run dist:mac` - Build for macOS (ARM64)
-- `npm run dist:linux` - Build for Linux
-- `npm run dist:all` - Build for all platforms
-
-## 🛠 Development
-
-### Adding Shadcn UI Components
-
-```bash
-pnpx shadcn@latest add button
-pnpx shadcn@latest add dialog
-# Add more components as needed
-```
+## 👨‍💻 Development Guide
 
 ### Adding Routes
 
@@ -142,6 +137,153 @@ import { Link } from '@tanstack/react-router';
 <Link to="/about">About</Link>;
 ```
 
+## 🛠️ CI/CD Configuration
+
+### Option 1: Template/Library Release Workflow
+
+For templates, libraries, or projects that don't need platform-specific builds:
+
+```yaml
+# .github/workflows/release.yml
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+```
+
+### Option 2: Full Electron Application Workflow
+
+For projects that need platform-specific Electron builds:
+
+```yaml
+# .github/workflows/release.yml
+name: Build and Release
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+
+  build-electron:
+    needs: release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            build_command: npm run dist:linux
+            artifact_path: dist/*.AppImage
+          - os: windows-latest
+            build_command: npm run dist:win
+            artifact_path: dist/*.{exe,msi}
+          - os: macos-latest
+            build_command: npm run dist:mac
+            artifact_path: dist/*.dmg
+
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build app
+        run: ${{ matrix.build_command }}
+      - name: Upload artifacts to release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{ matrix.artifact_path }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+### Understanding the CI Setup
+
+- **For Template/Library**:
+
+  - Simple workflow that just runs linting and creates semantic releases
+  - No platform-specific builds needed
+
+- **For Applications**:
+  - Two-job workflow with release creation and platform builds
+  - Builds Windows, macOS, and Linux packages
+  - Attaches artifacts to GitHub releases when tags are pushed
+
+### Triggering Releases
+
+For semantic-release to create a new version:
+
+1. Make commits following [Conventional Commits](https://www.conventionalcommits.org/)
+
+   - `feat: add new feature` - Triggers minor version bump
+   - `fix: resolve bug` - Triggers patch version bump
+   - `BREAKING CHANGE: major change` - Triggers major version bump
+
+2. Push to the main branch:
+
+   ```bash
+   git push origin main
+   ```
+
+3. The workflow will automatically:
+   - Determine the next version from your commits
+   - Update the CHANGELOG.md
+   - Create a GitHub release with notes
+   - Build platform-specific binaries (if using App workflow)
+
 ## 🌐 Electron Configuration
 
 This template includes a basic Electron configuration in main.ts:
@@ -149,16 +291,16 @@ This template includes a basic Electron configuration in main.ts:
 - Development mode loads from `http://localhost:5123`
 - Production mode loads from index.html
 
-To customize Electron functionality, modify the main.ts file.
+To customize Electron functionality, modify the [main.ts](./src/electron/main.ts) file.
 
 ## 🔧 Configuration Files
 
-- **tsconfig.json** - Main TypeScript configuration
-- **tsconfig.json** - Electron process TypeScript configuration
-- **vite.config.js** - Vite bundler configuration
-- **electron-builder.json** - Electron builder configuration
-- **eslint.config.js** - ESLint rules configuration
-- **prettier.config.js** - Prettier formatting rules
+- **[tsconfig.json (main)](./tsconfig.json)** - Main TypeScript configuration
+- **[tsconfig.json (electron)](./src/electron/tsconfig.json)** - Electron process TypeScript configuration
+- **[vite.config.js](./vite.config.js)** - Vite bundler configuration
+- **[electron-builder.json](./electron-builder.json)** - Electron builder configuration
+- **[eslint.config.js](./eslint.config.js)** - ESLint rules configuration
+- **[prettier.config.js](./prettier.config.js)** - Prettier formatting rules
 
 ## 📚 Useful Resources
 
@@ -172,7 +314,7 @@ To customize Electron functionality, modify the main.ts file.
 
 ## 📄 License
 
-This project is licensed under the [MIT License](./license.md) - see the license.md file for details.
+This project is licensed under the MIT License - see the license.md file for details.
 
 ## ✨ Acknowledgments
 
