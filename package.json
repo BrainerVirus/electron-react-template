@@ -14,7 +14,9 @@
     "serve": "vite preview",
     "test": "vitest run",
     "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "format": "prettier",
+    "format:fix": "prettier --write .",
     "check": "prettier --write . && eslint --fix",
     "transpile:electron": "tsc --project src/electron/tsconfig.json",
     "dist:mac": "npm run transpile:electron && npm run build && electron-builder --mac --arm64",
@@ -39,7 +41,6 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@tanstack/eslint-config": "^0.1.0",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/react": "^19.0.8",
@@ -50,7 +51,6 @@
     "electron-builder": "^26.0.12",
     "eslint-config-prettier": "^10.1.5",
     "eslint-import-resolver-typescript": "^4.3.4",
-    "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-import-x": "^4.11.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.4.0",
