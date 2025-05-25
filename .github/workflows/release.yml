@@ -100,13 +100,22 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Lint (Optional - run again before release)
-        run: npm run lint || continue
-
-      - name: Download build artifacts
+      - name: Download Windows build artifact
         uses: actions/download-artifact@v4
         with:
-          path: . # Download artifacts into the current directory
+          name: app-artifacts-windows
+          path: windows-build
+      - name: Download macOS build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-artifacts-mac
+          path: mac-build
+
+      - name: Download Linux build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-artifacts-linux
+          path: linux-build
 
       - name: List downloaded artifacts (for debugging)
         run: ls -R
