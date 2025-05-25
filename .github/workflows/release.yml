@@ -1,59 +1,12 @@
-# .github/workflows/release.yml
-name: Release
+name: Release # Consider renaming this workflow to something like 'Build and Release'
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build-windows:
-    name: Build - Windows
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Build Windows app
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run dist:win
-      - name: Upload Windows artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-artifacts
-          path: dist/
-          retention-days: 7
-
-  build-mac:
-    name: Build - macOS
-    runs-on: macOS-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Build macOS app
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run dist:mac
-      - name: Upload macOS artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-artifacts
-          path: dist/
-          retention-days: 7
-
-  build-linux:
-    name: Build - Linux
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -64,21 +17,75 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Build Linux app
+      - name: Run ESLint
+        run: npm run lint
+      - name: Check formatting
+        run: npx prettier --check .
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Setup playwright
+        run: npx playwright install --with-deps
+      - name: Run tests
+        run: npm test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  build:
+    name: Build ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: [lint, test]
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            script: dist:win
+            artifact_name: app-artifacts-windows
+          - os: macOS-latest
+            script: dist:mac
+            artifact_name: app-artifacts-mac
+          - os: ubuntu-latest
+            script: dist:linux
+            artifact_name: app-artifacts-linux
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build app
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npm run dist:linux
-      - name: Upload Linux artifact
+        run: npm run ${{ matrix.script }}
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-artifacts
+          name: ${{ matrix.artifact_name }}
           path: dist/
           retention-days: 7
 
   release:
     name: Release
     runs-on: ubuntu-latest
-    needs: [build-windows, build-mac, build-linux]
+    needs: [build]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -90,14 +97,16 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm ci
-      - name: Lint
+      - name: Lint (Optional - run again before release)
         run: npm run lint || continue
 
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: app-artifacts
-          path: .
+          path: . # Download artifacts into the current directory
+
+      - name: List downloaded artifacts (for debugging)
+        run: ls -R
 
       - name: Release
         env:

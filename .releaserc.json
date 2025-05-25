@@ -20,12 +20,17 @@
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "dist/*.exe", "label": "Windows Installer" },
-          { "path": "dist/*.dmg", "label": "macOS Installer" },
-          { "path": "dist/*.AppImage", "label": "Linux AppImage" },
-          { "path": "dist/*.deb", "label": "Linux Debian Package" },
-          { "path": "dist/*.rpm", "label": "Linux RPM Package" },
-          { "path": "dist/*.snap", "label": "Linux Snap Package" }
+          { "path": "app-artifacts-windows/dist/*.exe", "label": "Windows Installer" },
+          { "path": "app-artifacts-windows/dist/*.msi", "label": "Windows MSI Installer" },
+          { "path": "app-artifacts-windows/dist/*.yml", "label": "Windows Latest Info" },
+          { "path": "app-artifacts-mac/dist/*.dmg", "label": "macOS Intel/ARM Installer" },
+          { "path": "app-artifacts-mac/dist/*.zip", "label": "macOS Zip" },
+          { "path": "app-artifacts-mac/dist/*.yml", "label": "macOS Latest Info" },
+          { "path": "app-artifacts-linux/dist/*.AppImage", "label": "Linux AppImage" },
+          { "path": "app-artifacts-linux/dist/*.deb", "label": "Linux Debian Package" },
+          { "path": "app-artifacts-linux/dist/*.rpm", "label": "Linux RPM Package" },
+          { "path": "app-artifacts-linux/dist/*.snap", "label": "Linux Snap Package" },
+          { "path": "app-artifacts-linux/dist/*.yml", "label": "Linux Latest Info" }
         ]
       }
     ]
