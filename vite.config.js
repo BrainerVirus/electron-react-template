@@ -21,16 +21,42 @@ export default defineConfig({
 					exclude: ['src/electron/**'],
 				},
 			}),
-		TanStackRouterVite({ autoCodeSplitting: true }),
+		!isTest && TanStackRouterVite({ autoCodeSplitting: true }),
 		viteReact(),
 		tailwindcss(),
 	],
 	base: './',
 	test: {
-		browser: {
-			enabled: true,
-			provider: 'playwright',
-			instances: [{ browser: 'chromium' }],
+		environment: 'jsdom',
+		globals: true,
+		setupFiles: './setupTests.ts',
+		reporters: process.env.GITHUB_ACTIONS
+			? ['dot', 'github-actions', ['html', { outputFile: './report/index.html' }]]
+			: ['verbose', ['html', { outputFile: './report/index.html' }]],
+		pool: 'forks',
+		poolOptions: { threads: { singleThread: true } },
+		singleThread: true,
+		coverage: {
+			provider: 'v8',
+			include: ['src/**/*.{js,ts,jsx,tsx}'],
+			exclude: [
+				'src/**/*.test.{js,ts,jsx,tsx}',
+				'src/electron/**',
+				'src/**/*.stories.{js,ts,jsx,tsx}',
+				'src/**/*.d.ts',
+				'src/reportWebVitals.ts',
+				'src/routeTree.gen.ts',
+				'src/routes/__root.tsx',
+				'src/main.tsx',
+			],
+			reporter: ['text', 'json', 'html'],
+			all: true,
+			check: {
+				statements: 80,
+				branches: 80,
+				functions: 80,
+				lines: 80,
+			},
 		},
 	},
 	resolve: {

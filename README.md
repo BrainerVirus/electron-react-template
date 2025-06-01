@@ -33,10 +33,12 @@ This repository is designed to be used as a template for building Electron appli
 3. Choose the owner and name for your new repository
 4. Click "Create repository from template"
 5. Clone your new repository:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
    cd YOUR-REPO-NAME
    ```
+
 6. Install dependencies:
    ```bash
    npm install
@@ -67,23 +69,51 @@ npm install
 
 After creating your project using either method above, you'll need to:
 
-1. **Update package.json**:
+1.  **Update package.json**:
 
-   - Change the name, description, and version
-   - Update the repository URL to your new repo
-   - Adjust any dependencies as needed
+    - Change the `name`, `description`, and `version` (e.g., to `0.1.0` or `1.0.0`).
+    - Update the `author` object with your details.
+    - Update the `repository.url` to point to your new repository.
+    - Adjust any dependencies in `dependencies` and `devDependencies` as needed for your project.
 
-2. **Configure GitHub Actions**:
-   - Keep or modify release.yml based on your needs:
-     - For a template/library: Use the simpler template release workflow
-     - For an application: Use the full Electron build workflow (see below)
+2.  **Configure GitHub Actions**:
+    - Keep or modify release.yml based on your needs:
+      - For a template/library: Use the simpler template release workflow
+      - For an application: Use the full Electron build workflow (see below)
+
+## 📜 Available Scripts
+
+This project uses npm for script management. Here are some of the most common scripts:
+
+- `npm run dev`: Starts the development server for both React and Electron. It uses `start-server-and-test` to first launch the React dev server and then the Electron app.
+- `npm run dev:react`: Starts only the Vite development server for the React frontend.
+- `npm run dev:electron`: Transpiles Electron's TypeScript code and then starts Electron in development mode, assuming the React dev server is already running.
+- `npm run build`: Builds the React application using Vite and transpiles Electron's TypeScript code.
+- `npm run serve`: Serves the built React application locally using Vite's preview server.
+- `npm test`: Runs tests using Vitest in watch mode.
+- `npm run coverage`: Runs tests and generates a code coverage report.
+- `npm run lint`: Lints the codebase using ESLint.
+- `npm run lint:fix`: Lints the codebase and attempts to automatically fix issues.
+- `npm run format`: Checks code formatting using Prettier.
+- `npm run format:fix`: Formats the codebase using Prettier.
+- `npm run check`: Runs both Prettier formatting (and fixes) and ESLint linting (and fixes).
+- `npm run prepare`: Sets up Husky git hooks.
+- `npm run lint-staged`: Runs linters on staged files (used by Husky pre-commit hook).
+- `npm run commit`: Starts Commitizen CLI for conventional commits.
+- `npm run transpile:electron`: Transpiles only the Electron main process TypeScript code.
+- `npm run dist:mac`: Builds the application for macOS (ARM64).
+- `npm run dist:linux`: Builds the application for Linux (x64).
+- `npm run dist:win`: Builds the application for Windows (x64).
+- `npm run dist:all`: Builds the application for macOS, Linux, and Windows.
+
+Refer to the `scripts` section in the [`package.json`](package.json) file for a complete list.
 
 ## 🚀 Development Workflow
 
 ### Prerequisites
 
-- Node.js 22.x or higher
-- npm (required, pnpm has compatibility issues with Electron)
+- Node.js `>=22.14.0`
+- npm `>=10.9.2`
 
 ### Development
 
@@ -139,150 +169,81 @@ import { Link } from '@tanstack/react-router';
 
 ## 🛠️ CI/CD Configuration
 
-### Option 1: Template/Library Release Workflow
+This project comes with pre-configured GitHub Actions workflows for Continuous Integration (CI), automated Releases, and GitHub Pages deployment of test and coverage reports.
 
-For templates, libraries, or projects that don't need platform-specific builds:
+### 1. Continuous Integration Workflow (`ci.yml`)
 
-```yaml
-# .github/workflows/release.yml
-name: Release
+This workflow runs on every push to any branch and on every pull request targeting the `main` branch. It performs the following jobs:
 
-on:
-  push:
-    branches: [main]
+- **Lint**:
+  - Checks out the code.
+  - Sets up Node.js (version 22).
+  - Installs dependencies using `npm ci`.
+  - Runs ESLint (`npm run lint`).
+  - Checks code formatting with Prettier (`npx prettier --check .`).
+- **Test and Coverage**:
+  - Checks out the code.
+  - Sets up Node.js (version 22).
+  - Installs dependencies using `npm ci`.
+  - Runs unit/integration tests (`npm test`).
+  - Generates code coverage report (`npm run coverage`).
+  - Uploads Vitest HTML Test Report (from `report/index.html` as per `vite.config.js`) as an artifact.
+    _Note: The workflow uploads from `report/`. Ensure this path matches your Vitest HTML reporter output in [`vite.config.js`](vite.config.js) or update the workflow._
+  - Uploads Vitest HTML Coverage Report (from `coverage/`) as an artifact.
 
-jobs:
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Lint
-        run: npm run lint
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
-```
+Refer to the file [`ci.yml`](./.github/workflows/ci.yml) to see with details.
 
-### Option 2: Full Electron Application Workflow
+### 2. Release Workflow (`release.yml`)
 
-For projects that need platform-specific Electron builds:
+This workflow runs on every push to the `main` branch. It handles linting, testing, building the application for multiple platforms, creating a GitHub release using `semantic-release`, and deploying test/coverage reports to GitHub Pages.
 
-```yaml
-# .github/workflows/release.yml
-name: Build and Release
+**Jobs:**
 
-on:
-  push:
-    branches: [main]
-    tags:
-      - 'v*'
+- **Lint**: Same as the lint job in the CI workflow.
+- **Test and Coverage**: Same as the test and coverage job in the CI workflow.
+- **Deploy Reports to GitHub Pages**:
+  - Runs after the `test_and_coverage` job completes successfully.
+  - Downloads the test and coverage reports artifacts from the `test_and_coverage` job.
+  - Prepares the reports for deployment to GitHub Pages.
+  - Uploads the reports to GitHub Pages.
+- **Build**:
+  - Runs after `lint` and `test_and_coverage` jobs complete successfully.
+  - Uses a matrix strategy to build the application for Windows, macOS, and Linux.
+    - **Windows**: Runs `npm run dist:win`.
+    - **macOS**: Runs `npm run dist:mac`.
+    - **Linux**: Runs `npm run dist:linux`.
+  - Uploads the build artifacts from the `dist/` directory for each platform (e.g., `app-artifacts-windows`, `app-artifacts-mac`, `app-artifacts-linux`).
+- **Release**:
+  - Runs after the `build` job completes successfully.
+  - Sets up Node.js and installs dependencies.
+  - Downloads the build artifacts created by the `build` job into respective directories (`windows-build/`, `mac-build/`, `linux-build/`).
+  - Runs `npx semantic-release` to:
+    - Analyze commits to determine the next version.
+    - Generate release notes and update [`CHANGELOG.md`](CHANGELOG.md).
+    - Tag the release in Git.
+    - Create a GitHub Release.
+    - Upload the platform-specific build artifacts (e.g., `.exe`, `.dmg`, `.AppImage`) to the GitHub Release, as configured in [`.releaserc.json`](.releaserc.json).
 
-jobs:
-  release:
-    name: Create Release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Lint
-        run: npm run lint
-      - name: Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+Refer to the file [`release.yml`](./.github/workflows/release.yml) to see with details.
 
-  build-electron:
-    needs: release
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        include:
-          - os: ubuntu-latest
-            build_command: npm run dist:linux
-            artifact_path: dist/*.AppImage
-          - os: windows-latest
-            build_command: npm run dist:win
-            artifact_path: dist/*.{exe,msi}
-          - os: macos-latest
-            build_command: npm run dist:mac
-            artifact_path: dist/*.dmg
+### Required Post-Template Setup for Releases:
 
-    name: Build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Build app
-        run: ${{ matrix.build_command }}
-      - name: Upload artifacts to release
-        uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
-        with:
-          files: ${{ matrix.artifact_path }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
+If you are using this repository as a template for a new project, remember to:
 
-### Understanding the CI Setup
+1.  **Update `package.json`**: Ensure `name`, `description`, `author`, and `repository.url` are correct for your project.
+2.  **GitHub Secrets**: `semantic-release` requires a `GITHUB_TOKEN` with appropriate permissions to create releases and push to the repository. The default `secrets.GITHUB_TOKEN` provided by GitHub Actions usually has sufficient permissions for public repositories. For private repositories, you might need to adjust permissions or use a Personal Access Token (PAT).
+3.  **Release Configuration (`.releaserc.json`)**: Review the asset paths in [`.releaserc.json`](.releaserc.json) to ensure they match the output of your build process if you make changes to the build scripts or `electron-builder.json`.
 
-- **For Template/Library**:
+### Triggering Releases:
 
-  - Simple workflow that just runs linting and creates semantic releases
-  - No platform-specific builds needed
+Releases are triggered automatically by `semantic-release` based on commit messages on the `main` branch. Follow [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
-- **For Applications**:
-  - Two-job workflow with release creation and platform builds
-  - Builds Windows, macOS, and Linux packages
-  - Attaches artifacts to GitHub releases when tags are pushed
+- `feat: add new feature` (triggers a minor release, e.g., 1.0.0 -> 1.1.0)
+- `fix: resolve bug` (triggers a patch release, e.g., 1.0.0 -> 1.0.1)
+- Commits with `BREAKING CHANGE:` in the body or footer trigger a major release (e.g., 1.0.0 -> 2.0.0).
+- Other commit types like `chore:`, `docs:`, `style:`, `refactor:`, `perf:`, `test:` typically do not trigger a release unless they include a breaking change.
 
-### Triggering Releases
-
-For semantic-release to create a new version:
-
-1. Make commits following [Conventional Commits](https://www.conventionalcommits.org/)
-
-   - `feat: add new feature` - Triggers minor version bump
-   - `fix: resolve bug` - Triggers patch version bump
-   - `BREAKING CHANGE: major change` - Triggers major version bump
-
-2. Push to the main branch:
-
-   ```bash
-   git push origin main
-   ```
-
-3. The workflow will automatically:
-   - Determine the next version from your commits
-   - Update the CHANGELOG.md
-   - Create a GitHub release with notes
-   - Build platform-specific binaries (if using App workflow)
+Pushing these commits to `main` will initiate the release workflow.
 
 ## 🌐 Electron Configuration
 
