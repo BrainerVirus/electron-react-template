@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/BrainerVirus/electron-react-template/compare/v1.0.0...v1.1.0) (2025-05-25)
+
+### Features
+
+- add custom header max length rule to commitlint configuration ([a121a6e](https://github.com/BrainerVirus/electron-react-template/commit/a121a6e1df2911df1168c168d0939346b8d9e7b7))
+- update release workflow to download platform-specific build artifacts ([d6ec49c](https://github.com/BrainerVirus/electron-react-template/commit/d6ec49cca928fca7f17319373f71f3c3dcc15f20))
+
 # 1.0.0 (2025-05-25)
 
 ### Bug Fixes
