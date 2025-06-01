@@ -21,17 +21,19 @@ export default defineConfig({
 					exclude: ['src/electron/**'],
 				},
 			}),
-		TanStackRouterVite({ autoCodeSplitting: true }),
+		!isTest && TanStackRouterVite({ autoCodeSplitting: true }),
 		viteReact(),
 		tailwindcss(),
 	],
 	base: './',
 	test: {
-		browser: {
-			enabled: true,
-			provider: 'playwright',
-			instances: [{ browser: 'chromium' }],
-		},
+		environment: 'jsdom',
+		globals: true,
+		setupFiles: './setupTests.ts',
+		reporters: process.env.GITHUB_ACTIONS ? ['dot', 'github-actions'] : ['verbose'],
+		pool: 'forks',
+		poolOptions: { threads: { singleThread: true } },
+		singleThread: true,
 	},
 	resolve: {
 		alias: {
