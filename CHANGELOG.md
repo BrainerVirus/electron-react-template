@@ -1,3 +1,9 @@
+# [1.4.0](https://github.com/BrainerVirus/electron-react-template/compare/v1.3.0...v1.4.0) (2025-06-01)
+
+### Features
+
+- add issue templates for bug reports and feature requests, and enhance contributing guidelines ([e3060ee](https://github.com/BrainerVirus/electron-react-template/commit/e3060ee88b930d320417e895bafe580d62a614ae))
+
 # [1.3.0](https://github.com/BrainerVirus/electron-react-template/compare/v1.2.2...v1.3.0) (2025-06-01)
 
 ### Bug Fixes
