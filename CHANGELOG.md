@@ -1,3 +1,9 @@
+## [1.2.2](https://github.com/BrainerVirus/electron-react-template/compare/v1.2.1...v1.2.2) (2025-06-01)
+
+### Bug Fixes
+
+- **ci:** restrict branches to 'main' for push and pull_request events ([983784c](https://github.com/BrainerVirus/electron-react-template/commit/983784c63387ebba708a012c7e321572e186a8f1))
+
 ## [1.2.1](https://github.com/BrainerVirus/electron-react-template/compare/v1.2.0...v1.2.1) (2025-06-01)
 
 ### Bug Fixes
