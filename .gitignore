@@ -8,3 +8,4 @@ dist-electron
 # Million Lint
 .million
 coverage
+report

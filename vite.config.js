@@ -30,7 +30,9 @@ export default defineConfig({
 		environment: 'jsdom',
 		globals: true,
 		setupFiles: './setupTests.ts',
-		reporters: process.env.GITHUB_ACTIONS ? ['dot', 'github-actions'] : ['verbose'],
+		reporters: process.env.GITHUB_ACTIONS
+			? ['dot', 'github-actions', ['html', { outputFile: './report/index.html' }]]
+			: ['verbose', ['html', { outputFile: './report/index.html' }]],
 		pool: 'forks',
 		poolOptions: { threads: { singleThread: true } },
 		singleThread: true,
