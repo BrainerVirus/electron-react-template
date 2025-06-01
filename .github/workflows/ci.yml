@@ -1,3 +1,4 @@
+# .github/workflows/ci.yml
 name: CI
 
 on:
@@ -38,65 +39,120 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Run unit/integration tests
+        # This will now output the HTML report to `report/` due to vite.config.js changes
         run: npm test
 
       - name: Generate code coverage report
+        # This will output the HTML report to `coverage/`
         run: npm run coverage
 
       - name: Upload Vitest HTML Test Report
         uses: actions/upload-artifact@v4
-        if: always() # Upload even if tests fail
+        if: always()
         with:
           name: vitest-html-report
-          path: report/
+          path: report/ # Path where the test HTML report is generated
           retention-days: 30
+
       - name: Upload Vitest HTML Coverage Report
         uses: actions/upload-artifact@v4
-        if: always() # Upload even if coverage generation fails
+        if: always()
         with:
           name: vitest-coverage-report
-          path:
-            coverage/ # This should be the actual path where Vitest outputs the HTML report.
-            # Based on your ls output, it's directly in `coverage/`.
+          path: coverage/ # Path where the coverage HTML report is generated
           retention-days: 30
 
   deploy_reports:
     name: Deploy Vitest Reports to GitHub Pages
     runs-on: ubuntu-latest
-    needs: test_and_coverage # Depends on tests/coverage to ensure artifact exists
+    needs: test_and_coverage
     permissions:
-      pages: write # Grants the workflow permission to deploy to GitHub Pages
-      id-token: write # Required for OIDC authentication by actions/deploy-pages
+      pages: write
+      id-token: write
 
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }} # Sets the environment URL
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download coverage report artifact directly to Pages directory
+      - name: Download all test reports artifacts
+        # This will download 'vitest-html-report' and 'vitest-coverage-report'
+        # into `downloaded-artifacts/vitest-html-report/` and `downloaded-artifacts/vitest-coverage-report/`
         uses: actions/download-artifact@v4
         with:
-          name: vitest-coverage-report
-          # This is the crucial change: Download the contents of 'vitest-coverage-report'
-          # artifact directly into the ./.github-pages/ directory.
-          path: ./.github-pages/
+          path: downloaded-artifacts # Download all artifacts from the run
 
-      - name: Verify contents for deployment
+      - name: Prepare reports for GitHub Pages
+        env:
+          # Define this for potential use in sed if needed later
+          GITHUB_PAGES_BASE_PATH: /electron-react-template/
         run: |
+          # Create the root directory for GitHub Pages content and subdirectories
+          mkdir -p ./.github-pages/tests
+          mkdir -p ./.github-pages/coverage
+
+          # Move contents of downloaded test report into ./.github-pages/tests/
+          if [ -d "downloaded-artifacts/vitest-html-report" ]; then
+              echo "Moving vitest-html-report to ./.github-pages/tests/"
+              mv downloaded-artifacts/vitest-html-report/* ./.github-pages/tests/
+              # Optional: If test report needs a base tag injected
+              # if [ -f ".github-pages/tests/index.html" ]; then
+              #   sed -i 's|<head>|<head><base href="'"$GITHUB_PAGES_BASE_PATH"'tests/">|' ./.github-pages/tests/index.html
+              # fi
+          else
+              echo "Warning: vitest-html-report artifact directory not found."
+          fi
+
+          # Move contents of downloaded coverage report into ./.github-pages/coverage/
+          if [ -d "downloaded-artifacts/vitest-coverage-report" ]; then
+              echo "Moving vitest-coverage-report to ./.github-pages/coverage/"
+              mv downloaded-artifacts/vitest-coverage-report/* ./.github-pages/coverage/
+          else
+              echo "Warning: vitest-coverage-report artifact directory not found."
+          fi
+
+          # Create a root index.html for navigation
+          echo "Creating a root index.html for navigation..."
+          cat <<EOF > ./.github-pages/index.html
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>Electron React Template - CI Reports</title>
+              <style>
+                  body { font-family: sans-serif; margin: 2em; line-height: 1.6; }
+                  h1 { color: #333; }
+                  ul { list-style: none; padding: 0; }
+                  li { margin-bottom: 0.5em; }
+                  a { color: #007bff; text-decoration: none; }
+                  a:hover { text-decoration: underline; }
+              </style>
+          </head>
+          <body>
+              <h1>Electron React Template - CI Reports</h1>
+              <p>Welcome to the automated CI reports for this project.</p>
+              <ul>
+                  <li><a href="./tests/">Vitest HTML Test Report</a></li>
+                  <li><a href="./coverage/">Vitest HTML Coverage Report</a></li>
+              </ul>
+              <hr>
+              <p>Generated by GitHub Actions.</p>
+          </body>
+          </html>
+          EOF
+
           echo "Contents of ./.github-pages for deployment:"
-          ls -R ./.github-pages/ # This should now show your report files
+          ls -R ./.github-pages/
 
       - name: Upload Pages artifact
-        # This action takes the prepared directory (`.github-pages`) and creates a special
-        # 'pages-artifact' that the deploy-pages action can pick up.
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./.github-pages/ # Path to the directory containing all your static content
+          path: ./.github-pages/
 
       - name: Deploy to GitHub Pages
         id: deployment
-        # This action consumes the 'pages-artifact' and publishes it to GitHub Pages.
         uses: actions/deploy-pages@v4
