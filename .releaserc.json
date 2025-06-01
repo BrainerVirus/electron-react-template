@@ -20,17 +20,14 @@
       "@semantic-release/github",
       {
         "assets": [
-          { "path": "windows-build/dist/*.exe", "label": "Windows Installer" },
-          { "path": "windows-build/dist/*.msi", "label": "Windows MSI Installer" },
-          { "path": "windows-build/dist/*.yml", "label": "Windows Latest Info" },
-          { "path": "mac-build/dist/*.dmg", "label": "macOS Intel/ARM Installer" },
-          { "path": "mac-build/dist/*.zip", "label": "macOS Zip" },
-          { "path": "mac-build/dist/*.yml", "label": "macOS Latest Info" },
-          { "path": "linux-build/dist/*.AppImage", "label": "Linux AppImage" },
-          { "path": "linux-build/dist/*.deb", "label": "Linux Debian Package" },
-          { "path": "linux-build/dist/*.rpm", "label": "Linux RPM Package" },
-          { "path": "linux-build/dist/*.snap", "label": "Linux Snap Package" },
-          { "path": "linux-build/dist/*.yml", "label": "Linux Latest Info" }
+          { "path": "windows-build/*.exe", "label": "Windows Installer" },
+          { "path": "windows-build/*.msi", "label": "Windows MSI Installer" },
+          { "path": "windows-build/*.yml", "label": "Windows Latest Info" },
+          { "path": "mac-build/*.dmg", "label": "macOS Intel/ARM Installer" },
+          { "path": "mac-build/*.dmg.blockmap", "label": "macOS Intel/ARM Blockmap" },
+          { "path": "mac-build/*.yml", "label": "macOS Latest Info" },
+          { "path": "linux-build/*.AppImage", "label": "Linux AppImage" },
+          { "path": "linux-build/*.yml", "label": "Linux Latest Info" }
         ]
       }
     ]
