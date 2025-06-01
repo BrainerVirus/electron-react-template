@@ -1,3 +1,13 @@
+# [1.2.0](https://github.com/BrainerVirus/electron-react-template/compare/v1.1.0...v1.2.0) (2025-06-01)
+
+### Bug Fixes
+
+- **electron-builder:** add missing closing bracket for 'publish' in electron-builder configuration ([2f73b84](https://github.com/BrainerVirus/electron-react-template/commit/2f73b84dda5b496e6d8cbc0720adb7914148b2e3))
+
+### Features
+
+- **semantic-release:** update release assets paths to remove 'dist' directory ([2cc5b40](https://github.com/BrainerVirus/electron-react-template/commit/2cc5b40a8c1fe4ba406efa2b8c6caa98cb52d3b0))
+
 # [1.1.0](https://github.com/BrainerVirus/electron-react-template/compare/v1.0.0...v1.1.0) (2025-05-25)
 
 ### Features
