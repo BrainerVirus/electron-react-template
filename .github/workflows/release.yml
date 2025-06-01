@@ -45,7 +45,7 @@ jobs:
         if: always() # Upload even if tests fail
         with:
           name: vitest-html-report
-          path: test-results/html/
+          path: report/
           retention-days: 30
 
       - name: Upload Vitest HTML Coverage Report
@@ -53,7 +53,7 @@ jobs:
         if: always() # Upload even if coverage generation fails
         with:
           name: vitest-coverage-report
-          path: coverage/html/
+          path: coverage/
           retention-days: 30
 
   build:

@@ -186,8 +186,8 @@ This workflow runs on every push to any branch and on every pull request targeti
   - Runs unit/integration tests (`npm test`).
   - Generates code coverage report (`npm run coverage`).
   - Uploads Vitest HTML Test Report (from `report/index.html` as per `vite.config.js`) as an artifact.
-    _Note: The workflow currently attempts to upload from `test-results/html/`. Ensure this path matches your Vitest HTML reporter output in [`vite.config.js`](vite.config.js) or update the workflow._
-  - Uploads Vitest HTML Coverage Report (from `coverage/html/`) as an artifact.
+    _Note: The workflow currently attempts to upload from `report/`. Ensure this path matches your Vitest HTML reporter output in [`vite.config.js`](vite.config.js) or update the workflow._
+  - Uploads Vitest HTML Coverage Report (from `coverage/`) as an artifact.
 
 Refer to the file [`ci.yml`](.github\workflows\ci.yml) to see with details.
 
