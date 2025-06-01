@@ -1,3 +1,23 @@
+# [1.3.0](https://github.com/BrainerVirus/electron-react-template/compare/v1.2.2...v1.3.0) (2025-06-01)
+
+### Bug Fixes
+
+- **ci:** correct paths for Vitest HTML report and coverage report uploads ([3105d14](https://github.com/BrainerVirus/electron-react-template/commit/3105d14c36a8db515e837eb0bedace47478eeb41))
+- **ci:** refine deployment steps for Vitest reports and improve artifact handling ([9458325](https://github.com/BrainerVirus/electron-react-template/commit/94583253e5aa329cf0a88beffaf58969b1de1350))
+- **ci:** update paths and improve artifact handling for Vitest reports in CI workflow ([3d7e931](https://github.com/BrainerVirus/electron-react-template/commit/3d7e9317de379503e93281f32beda324750acc15))
+- **ci:** update paths for Vitest HTML report and coverage report uploads ([3ecb3f2](https://github.com/BrainerVirus/electron-react-template/commit/3ecb3f29caeec03bde581c3581aca1e60239321a))
+- **ci:** update push branch filter to allow all branches ([4186178](https://github.com/BrainerVirus/electron-react-template/commit/4186178536f0580b9af45cc1b8df8d380c7a660e))
+- **ci:** update push branch filter to allow all branches ([0ef634b](https://github.com/BrainerVirus/electron-react-template/commit/0ef634ba9192c6c98c5ceb2f2ad52ef25556b464))
+
+### Features
+
+- **ci:** add deployment of Vitest reports to GitHub Pages ([5455b25](https://github.com/BrainerVirus/electron-react-template/commit/5455b25c041ca4e6e3a8875745a30440a3b750e6))
+- **ci:** add linting and testing jobs with coverage report generation ([50fbfde](https://github.com/BrainerVirus/electron-react-template/commit/50fbfde12b1a59636bab675a2f7973027cf56968))
+- **ci:** implement deployment of test and coverage reports to GitHub Pages from main branch ([2c619bd](https://github.com/BrainerVirus/electron-react-template/commit/2c619bdd5e5c47dc28c6419faa30155c12b9b113))
+- **ci:** rename test job to test_and_coverage and add coverage report generation ([e5569a0](https://github.com/BrainerVirus/electron-react-template/commit/e5569a08a4071720d666edd7339c2ae6a7ac4471))
+- **coverage:** add coverage configuration and update dependencies for testing ([ca3d3b3](https://github.com/BrainerVirus/electron-react-template/commit/ca3d3b37daec93fb329565cee1aabe92bd171054))
+- **report:** add coverage report generation and update dependencies ([fb7107f](https://github.com/BrainerVirus/electron-react-template/commit/fb7107f816b31bfd9e87099a49a84f5881e0144e))
+
 ## [1.2.2](https://github.com/BrainerVirus/electron-react-template/compare/v1.2.1...v1.2.2) (2025-06-01)
 
 ### Bug Fixes
