@@ -33,10 +33,12 @@ This repository is designed to be used as a template for building Electron appli
 3. Choose the owner and name for your new repository
 4. Click "Create repository from template"
 5. Clone your new repository:
+
    ```bash
    git clone https://github.com/YOUR-USERNAME/YOUR-REPO-NAME.git
    cd YOUR-REPO-NAME
    ```
+
 6. Install dependencies:
    ```bash
    npm install
@@ -167,7 +169,7 @@ import { Link } from '@tanstack/react-router';
 
 ## 🛠️ CI/CD Configuration
 
-This project comes with pre-configured GitHub Actions workflows for Continuous Integration (CI) and automated Releases.
+This project comes with pre-configured GitHub Actions workflows for Continuous Integration (CI), automated Releases, and GitHub Pages deployment of test and coverage reports.
 
 ### 1. Continuous Integration Workflow (`ci.yml`)
 
@@ -186,19 +188,24 @@ This workflow runs on every push to any branch and on every pull request targeti
   - Runs unit/integration tests (`npm test`).
   - Generates code coverage report (`npm run coverage`).
   - Uploads Vitest HTML Test Report (from `report/index.html` as per `vite.config.js`) as an artifact.
-    _Note: The workflow currently attempts to upload from `report/`. Ensure this path matches your Vitest HTML reporter output in [`vite.config.js`](vite.config.js) or update the workflow._
+    _Note: The workflow uploads from `report/`. Ensure this path matches your Vitest HTML reporter output in [`vite.config.js`](vite.config.js) or update the workflow._
   - Uploads Vitest HTML Coverage Report (from `coverage/`) as an artifact.
 
-Refer to the file [`ci.yml`](.github\workflows\ci.yml) to see with details.
+Refer to the file [`ci.yml`](./.github/workflows/ci.yml) to see with details.
 
 ### 2. Release Workflow (`release.yml`)
 
-This workflow runs on every push to the `main` branch. It handles linting, testing, building the application for multiple platforms, and creating a GitHub release using `semantic-release`.
+This workflow runs on every push to the `main` branch. It handles linting, testing, building the application for multiple platforms, creating a GitHub release using `semantic-release`, and deploying test/coverage reports to GitHub Pages.
 
 **Jobs:**
 
 - **Lint**: Same as the lint job in the CI workflow.
 - **Test and Coverage**: Same as the test and coverage job in the CI workflow.
+- **Deploy Reports to GitHub Pages**:
+  - Runs after the `test_and_coverage` job completes successfully.
+  - Downloads the test and coverage reports artifacts from the `test_and_coverage` job.
+  - Prepares the reports for deployment to GitHub Pages.
+  - Uploads the reports to GitHub Pages.
 - **Build**:
   - Runs after `lint` and `test_and_coverage` jobs complete successfully.
   - Uses a matrix strategy to build the application for Windows, macOS, and Linux.
@@ -217,7 +224,7 @@ This workflow runs on every push to the `main` branch. It handles linting, testi
     - Create a GitHub Release.
     - Upload the platform-specific build artifacts (e.g., `.exe`, `.dmg`, `.AppImage`) to the GitHub Release, as configured in [`.releaserc.json`](.releaserc.json).
 
-Refer to the file [`release.yml`](.github\workflows\release.yml) to see with details.
+Refer to the file [`release.yml`](./.github/workflows/release.yml) to see with details.
 
 ### Required Post-Template Setup for Releases:
 
