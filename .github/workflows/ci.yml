@@ -58,3 +58,62 @@ jobs:
           name: vitest-coverage-report
           path: coverage/
           retention-days: 30
+  deploy_reports:
+    name: Deploy Vitest Reports to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: test_and_coverage
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all test reports artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: downloaded-artifacts
+
+      - name: Prepare reports for GitHub Pages
+        run: |
+          # Create the root directory for GitHub Pages content
+          mkdir -p ./.github-pages
+
+          # Move contents of downloaded test report into a specific subdirectory
+          # The artifact 'vitest-html-report' contains files from 'report/html/'
+          # When downloaded, its contents are in 'downloaded-artifacts/vitest-html-report/'
+          # We want them accessible at your-pages-url/vitest-tests/
+          if [ -d "downloaded-artifacts/vitest-html-report" ]; then
+              echo "Moving vitest-html-report to ./.github-pages/vitest-tests"
+              mv downloaded-artifacts/vitest-html-report ./.github-pages/vitest-tests
+          else
+              echo "Warning: vitest-html-report artifact directory not found."
+          fi
+
+          # Move contents of downloaded coverage report into a specific subdirectory
+          # The artifact 'vitest-coverage-report' contains files from 'coverage/'
+          # When downloaded, its contents are in 'downloaded-artifacts/vitest-coverage-report/'
+          # We want them accessible at your-pages-url/vitest-coverage/
+          if [ -d "downloaded-artifacts/vitest-coverage-report" ]; then
+              echo "Moving vitest-coverage-report to ./.github-pages/vitest-coverage"
+              mv downloaded-artifacts/vitest-coverage-report ./.github-pages/vitest-coverage
+          else
+              echo "Warning: vitest-coverage-report artifact directory not found."
+          fi
+
+          echo "Contents of ./.github-pages for deployment:"
+          ls -R ./.github-pages/ # For debugging, shows what will be deployed
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./.github-pages/
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
