@@ -7,3 +7,4 @@ dist-react
 dist-electron
 # Million Lint
 .million
+coverage

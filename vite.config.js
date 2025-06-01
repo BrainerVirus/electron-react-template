@@ -34,6 +34,28 @@ export default defineConfig({
 		pool: 'forks',
 		poolOptions: { threads: { singleThread: true } },
 		singleThread: true,
+		coverage: {
+			provider: 'v8',
+			include: ['src/**/*.{js,ts,jsx,tsx}'],
+			exclude: [
+				'src/**/*.test.{js,ts,jsx,tsx}',
+				'src/electron/**',
+				'src/**/*.stories.{js,ts,jsx,tsx}',
+				'src/**/*.d.ts',
+				'src/reportWebVitals.ts',
+				'src/routeTree.gen.ts',
+				'src/routes/__root.tsx',
+				'src/main.tsx',
+			],
+			reporter: ['text', 'json', 'html'],
+			all: true,
+			check: {
+				statements: 80,
+				branches: 80,
+				functions: 80,
+				lines: 80,
+			},
+		},
 	},
 	resolve: {
 		alias: {
