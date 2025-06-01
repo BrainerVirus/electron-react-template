@@ -1,3 +1,9 @@
+## [1.2.1](https://github.com/BrainerVirus/electron-react-template/compare/v1.2.0...v1.2.1) (2025-06-01)
+
+### Bug Fixes
+
+- update asset labels and restore publish configuration in electron-builder ([e4f596a](https://github.com/BrainerVirus/electron-react-template/commit/e4f596a5a6c64b29a369a70699bbe7cad803c433))
+
 # [1.2.0](https://github.com/BrainerVirus/electron-react-template/compare/v1.1.0...v1.2.0) (2025-06-01)
 
 ### Bug Fixes
